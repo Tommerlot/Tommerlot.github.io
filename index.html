@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tom Merlot — AbastUp — Acquisition de clients pour piscinistes</title>
+<meta name="description" content="Des publicités Meta qui apportent des demandes de devis de particuliers aux piscinistes, partout en France.">
+<style>
+
+  :root{
+    --bg:#0E1B1F;
+    --surface:#142428;
+    --surface-2:#1A2C30;
+    --line:rgba(255,255,255,0.10);
+    --text:#F3EEE6;
+    --muted:#A9B3B0;
+    --clay:#C97A4C;
+    --clay-dark:#AD6339;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px);}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation:none !important;transition:none !important;}
+  }
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:var(--sans);
+    font-size:17px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none;}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--clay);outline-offset:3px;}
+
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px;}
+
+  /* header */
+  header{
+    position:sticky;top:0;top:env(safe-area-inset-top,0px);z-index:10;
+    background:rgba(14,27,31,0.86);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;}
+  .logo{font-weight:700;font-size:19px;letter-spacing:-0.01em;}
+  .logo span{color:var(--clay);}
+  .logo small{display:block;font-weight:400;font-size:12px;color:var(--muted);letter-spacing:0;}
+  .navlinks{display:flex;gap:32px;font-size:14px;color:var(--muted);}
+  .navlinks a:hover{color:var(--text);}
+  .navcta{
+    font-size:14px;font-weight:600;color:var(--bg);
+    background:var(--clay);padding:9px 18px;border-radius:999px;
+  }
+  .navcta:hover{background:var(--clay-dark);}
+  @media(max-width:640px){.navlinks{display:none;}}
+
+  section{padding:80px 0;border-bottom:1px solid var(--line);}
+  section:last-of-type{border-bottom:none;}
+
+  /* hero */
+  .hero{padding-top:88px;padding-bottom:88px;}
+  .herogrid{max-width:720px;}
+  .kicker{color:var(--clay);font-size:14px;font-weight:600;margin-bottom:18px;}
+  .problem{color:var(--muted);font-size:16px;font-style:italic;margin:0 0 14px;}
+  h1{
+    font-weight:700;line-height:1.1;letter-spacing:-0.02em;margin:0;
+    font-size:clamp(32px,5vw,54px);max-width:14ch;
+    opacity:0;transform:translateY(14px);
+    animation:rise .7s ease-out .1s forwards;
+  }
+  @keyframes rise{to{opacity:1;transform:translateY(0);}}
+  .lead{color:var(--muted);font-size:18px;max-width:46ch;margin-top:22px;}
+  .ctarow{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap;}
+  .btn-primary{
+    background:var(--clay);color:var(--bg);font-weight:600;font-size:15px;
+    padding:14px 26px;border-radius:10px;display:inline-block;border:1px solid var(--clay);
+  }
+  .btn-primary:hover{background:var(--clay-dark);border-color:var(--clay-dark);}
+  .btn-ghost{
+    color:var(--text);font-weight:600;font-size:15px;
+    padding:14px 26px;border-radius:10px;border:1px solid var(--line);display:inline-block;
+  }
+  .btn-ghost:hover{border-color:var(--muted);}
+
+  h2{font-weight:700;letter-spacing:-0.01em;font-size:clamp(24px,3.2vw,32px);max-width:18ch;margin:0 0 12px;}
+  .sectionlead{color:var(--muted);font-size:16px;max-width:52ch;margin-bottom:44px;}
+
+  /* ce que je fais */
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+  @media(max-width:800px){.grid3{grid-template-columns:1fr;}}
+  .griditem{background:var(--surface);padding:28px;}
+  .griditem h3{font-size:16px;margin:0 0 8px;}
+  .griditem p{color:var(--muted);font-size:14px;margin:0;}
+
+  /* steps */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;}
+  @media(max-width:800px){.steps{grid-template-columns:1fr;}}
+  .step{border-top:1px solid var(--line);padding-top:20px;}
+  .stepnum{color:var(--clay);font-size:14px;font-weight:700;margin-bottom:14px;}
+  .step h3{font-size:19px;margin:0 0 10px;}
+  .step p{color:var(--muted);font-size:15px;margin:0;}
+
+  /* pour qui ce n'est pas */
+  .not-for{
+    border:1px solid var(--line);border-left:3px solid var(--clay);
+    border-radius:0 14px 14px 0;padding:28px 32px;background:var(--surface);
+  }
+  .not-for p{margin:0 0 10px;max-width:56ch;color:var(--text);}
+  .not-for p:last-child{margin-bottom:0;}
+
+  /* contact */
+  .contactcard{
+    border:1px solid var(--line);border-radius:20px;padding:48px;
+    background:linear-gradient(160deg,var(--surface-2),var(--surface));
+    display:flex;justify-content:space-between;align-items:center;gap:40px;flex-wrap:wrap;
+  }
+  .contactcard h2{max-width:14ch;}
+  .contactcard .details{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
+  .contactcard .details a{color:var(--text);font-size:16px;border-bottom:1px solid var(--line);width:max-content;}
+  .contactcard .details a:hover{border-bottom-color:var(--clay);}
+
+  /* footer */
+  footer{padding:32px 0 44px;}
+  .footrow{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px;flex-wrap:wrap;gap:12px;}
+  .footrow a:hover{color:var(--text);}
+
+  @media(max-width:520px){
+    body{font-size:16px;}
+    section{padding:56px 0;}
+    .hero{padding-top:56px;padding-bottom:56px;}
+    .contactcard{padding:32px;}
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav wrap">
+    <div class="logo">Abast<span>Up</span><small>Tom Merlot</small></div>
+    <nav class="navlinks">
+      <a href="#fais">Ce que je fais</a>
+      <a href="#comment">Comment ça marche</a>
+      <a href="#avantages">Avantages</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a class="navcta" href="#contact">Me contacter</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap herogrid">
+    <div class="kicker">Piscinistes — construction &amp; rénovation, partout en France</div>
+    <p class="problem">Vous savez construire de belles piscines. Le plus dur, c'est de remplir le planning.</p>
+    <h1>Des demandes de devis de particuliers de votre secteur, directement chez vous.</h1>
+    <p class="lead">Je mets en place des publicités Meta ciblées sur votre zone. Vous recevez les demandes et vous rappelez vous-même, sans intermédiaire.</p>
+    <div class="ctarow">
+      <a class="btn-primary" href="#contact">Me contacter</a>
+      <a class="btn-ghost" href="#comment">Voir comment ça marche</a>
+    </div>
+  </div>
+</section>
+
+<section id="fais">
+  <div class="wrap">
+    <h2>Ce que je fais</h2>
+    <div class="grid3">
+      <div class="griditem">
+        <h3>Publicités ciblées</h3>
+        <p>Des publicités Meta diffusées auprès des particuliers de votre secteur.</p>
+      </div>
+      <div class="griditem">
+        <h3>Demandes de devis</h3>
+        <p>Les personnes intéressées remplissent une demande de devis en ligne.</p>
+      </div>
+      <div class="griditem">
+        <h3>Vous rappelez</h3>
+        <p>Vous recevez la demande et vous rappelez vous-même, sans intermédiaire.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="comment">
+  <div class="wrap">
+    <h2>Comment ça se passe</h2>
+    <p class="sectionlead">Trois étapes, du premier échange aux premières demandes.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="stepnum">1</div>
+        <h3>On définit votre zone</h3>
+        <p>Votre zone d'intervention et vos chantiers types : rénovation, construction, taille de piscine.</p>
+      </div>
+      <div class="step">
+        <div class="stepnum">2</div>
+        <h3>Je lance les publicités</h3>
+        <p>Auprès des propriétaires de votre secteur, et j'ajuste au fil des résultats.</p>
+      </div>
+      <div class="step">
+        <div class="stepnum">3</div>
+        <h3>Vous rappelez</h3>
+        <p>Les demandes arrivent par mail ou SMS, et vous rappelez directement les particuliers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="avantages">
+  <div class="wrap">
+    <h2>Ce qui change pour vous</h2>
+    <p class="sectionlead">Une publicité qui parle à vos futurs chantiers, dans votre secteur.</p>
+    <div class="grid3">
+      <div class="griditem">
+        <h3>Zone ciblée</h3>
+        <p>Les publicités ne touchent que le secteur où vous intervenez réellement.</p>
+      </div>
+      <div class="griditem">
+        <h3>Visibilité locale</h3>
+        <p>Votre entreprise apparaît auprès des propriétaires de votre région, pas d'un public au hasard.</p>
+      </div>
+      <div class="griditem">
+        <h3>Clients qualifiés</h3>
+        <p>Chaque contact a un projet concret de construction ou de rénovation de piscine en tête.</p>
+      </div>
+      <div class="griditem">
+        <h3>Relance automatique</h3>
+        <p>Les personnes déjà intéressées revoient votre publicité dans leur fil d'actualité.</p>
+      </div>
+      <div class="griditem">
+        <h3>Budget maîtrisé</h3>
+        <p>Vous gardez la main sur votre budget publicitaire, réglé directement à Meta.</p>
+      </div>
+      <div class="griditem">
+        <h3>Spécialiste Meta Ads</h3>
+        <p>Facebook et Instagram sont mon seul terrain de jeu : ciblage, créatifs, suivi.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Pour qui ce n'est pas</h2>
+    <div class="not-for">
+      <p>Si votre carnet de commandes est déjà plein pour les prochains mois, ce service ne vous sera pas utile dans l'immédiat.</p>
+      <p>Si vous n'avez pas la disponibilité pour rappeler rapidement les demandes reçues, elles resteront sans suite.</p>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="contactcard">
+      <div>
+        <h2>Me contacter</h2>
+        <div class="details">
+          <a href="mailto:contact@abastup.fr">contact@abastup.fr</a>
+          <a href="tel:+33661468791">06 61 46 87 91</a>
+        </div>
+      </div>
+      <a class="btn-primary" href="mailto:contact@abastup.fr">Me contacter</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footrow">
+    <span>© 2026 AbastUp — Tom Merlot</span>
+    <a href="mentions-legales.html">Mentions légales</a>
+  </div>
+</footer>
+
+</body>
+</html>

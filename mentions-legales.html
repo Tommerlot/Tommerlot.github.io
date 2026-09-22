@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mentions légales — AbastUp</title>
+<meta name="description" content="Mentions légales du site AbastUp — Tom Merlot.">
+<style>
+
+  :root{
+    --bg:#0E1B1F;
+    --surface:#142428;
+    --surface-2:#1A2C30;
+    --line:rgba(255,255,255,0.10);
+    --text:#F3EEE6;
+    --muted:#A9B3B0;
+    --clay:#C97A4C;
+    --clay-dark:#AD6339;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px);}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation:none !important;transition:none !important;}
+  }
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:var(--sans);
+    font-size:17px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none;}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--clay);outline-offset:3px;}
+
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px;}
+
+  /* header */
+  header{
+    position:sticky;top:0;top:env(safe-area-inset-top,0px);z-index:10;
+    background:rgba(14,27,31,0.86);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;}
+  .logo{font-weight:700;font-size:19px;letter-spacing:-0.01em;}
+  .logo span{color:var(--clay);}
+  .logo small{display:block;font-weight:400;font-size:12px;color:var(--muted);letter-spacing:0;}
+  .navlinks{display:flex;gap:32px;font-size:14px;color:var(--muted);}
+  .navlinks a:hover{color:var(--text);}
+  .navcta{
+    font-size:14px;font-weight:600;color:var(--bg);
+    background:var(--clay);padding:9px 18px;border-radius:999px;
+  }
+  .navcta:hover{background:var(--clay-dark);}
+  @media(max-width:640px){.navlinks{display:none;}}
+
+  /* content */
+  main{padding:64px 0 24px;}
+  .mainwrap{max-width:720px;}
+  h1{font-weight:700;letter-spacing:-0.02em;font-size:clamp(30px,4vw,42px);margin:0 0 44px;}
+  .legalblock{padding:28px 0;border-top:1px solid var(--line);}
+  .legalblock:first-of-type{border-top:none;}
+  h2{font-weight:700;letter-spacing:-0.01em;font-size:19px;margin:0 0 14px;}
+  .legalblock dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:8px 20px;}
+  .legalblock dt{color:var(--muted);font-size:15px;}
+  .legalblock dd{margin:0;font-size:15px;}
+  .legalblock dd a{border-bottom:1px solid var(--line);}
+  .legalblock dd a:hover{border-bottom-color:var(--clay);}
+  @media(max-width:520px){
+    .legalblock dl{grid-template-columns:1fr;gap:2px 0;}
+    .legalblock dt{margin-top:10px;}
+  }
+
+  /* footer */
+  footer{padding:32px 0 44px;}
+  .footrow{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px;flex-wrap:wrap;gap:12px;}
+  .footrow a:hover{color:var(--text);}
+
+  @media(max-width:520px){
+    body{font-size:16px;}
+    main{padding:48px 0 16px;}
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav wrap">
+    <a class="logo" href="index.html">Abast<span>Up</span><small>Tom Merlot</small></a>
+    <nav class="navlinks">
+      <a href="index.html">Accueil</a>
+    </nav>
+    <a class="navcta" href="mailto:contact@abastup.fr">Me contacter</a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap mainwrap">
+    <h1>Mentions légales</h1>
+
+    <div class="legalblock">
+      <h2>Éditeur du site</h2>
+      <dl>
+        <dt>Nom</dt>
+        <dd>Merlot Tom — EI</dd>
+        <dt>Adresse</dt>
+        <dd>511 avenue du Général Leclerc, 06140 Vence, France</dd>
+        <dt>SIREN</dt>
+        <dd>130 358 963</dd>
+        <dt>Téléphone</dt>
+        <dd><a href="tel:+33661468791">06 61 46 87 91</a></dd>
+        <dt>Email</dt>
+        <dd><a href="mailto:contact@abastup.fr">contact@abastup.fr</a></dd>
+        <dt>Directeur de la publication</dt>
+        <dd>Merlot Tom</dd>
+      </dl>
+    </div>
+
+    <div class="legalblock">
+      <h2>Hébergement</h2>
+      <dl>
+        <dt>Hébergeur</dt>
+        <dd>GitHub Inc.</dd>
+        <dt>Adresse</dt>
+        <dd>88 Colin P. Kelly Jr Street, San Francisco, CA 94107, États-Unis</dd>
+        <dt>Téléphone</dt>
+        <dd><a href="tel:+18774484820">+1 877 448 4820</a></dd>
+      </dl>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap footrow">
+    <span>© 2026 AbastUp — Tom Merlot</span>
+    <a href="index.html">Retour à l'accueil</a>
+  </div>
+</footer>
+
+</body>
+</html>
