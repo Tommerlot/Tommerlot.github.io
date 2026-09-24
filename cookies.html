@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Cookies et traceurs — ABAST UP</title>
+  <meta name="description" content="Cookies et traceurs utilisés sur le site ABAST UP, et gestion de vos choix.">
+  <meta name="theme-color" content="#0b1114">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+  <a class="skip-link" href="#contenu">Aller au contenu</a>
+  <header class="site-header is-light">
+    <div class="site-header__inner">
+      <a class="brand" href="index.html" aria-label="ABAST UP — accueil">
+        <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 20c3 0 3-2 6-2s3 2 6 2 3-2 6-2 3 2 6 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M9 14 16 6l7 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 26c3 0 3-2 6-2s3 2 6 2 3-2 6-2 3 2 6 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".45"/></svg>
+        <span class="brand__name">ABAST UP</span>
+      </a>
+      <a class="btn btn--primary btn--sm" style="margin-left:auto" href="index.html#rdv">Réserver un rendez-vous</a>
+    </div>
+  </header>
+  <main class="legal" id="contenu">
+    <div class="container">
+      <a class="link" href="index.html">← Retour à l’accueil</a>
+      <h1>Cookies et traceurs</h1>
+      <p>Conformément à l’article 82 de la loi Informatique et Libertés et aux recommandations de la CNIL, cette page liste tout ce que le site abastup.fr enregistre sur votre appareil ou charge depuis un service tiers, et vous permet de gérer vos choix.</p>
+
+      <h2>En résumé</h2>
+      <ul>
+        <li>Le site ABAST UP <strong>ne dépose aucun cookie</strong>, ni publicitaire, ni de mesure d’audience, ni de réseau social.</li>
+        <li>Il n’utilise <strong>aucun outil de statistiques ou de suivi</strong>.</li>
+        <li>Les polices et la bibliothèque 3D sont hébergées avec le site : aucune donnée n’est envoyée à Google ou à un autre service lors de votre visite.</li>
+        <li>Le seul service tiers, l’agenda de réservation <strong>Calendly</strong>, n’est chargé <strong>que si vous cliquez</strong> sur « Afficher l’agenda de réservation ».</li>
+      </ul>
+
+      <h2>Ce qui est enregistré sur votre appareil</h2>
+      <table>
+        <thead><tr><th scope="col">Nom</th><th scope="col">Contenu et finalité</th><th scope="col">Durée</th><th scope="col">Consentement</th></tr></thead>
+        <tbody>
+          <tr><td>abast-criteria-v1<br>(stockage local du navigateur)</td><td>Les critères que vous avez choisis dans « Vous choisissez » (type de chantier, projet, clientèle, rayon), pour que vous les retrouviez et qu’ils soient joints à votre demande de rendez-vous. Ils restent sur votre appareil et ne nous sont transmis que si vous réservez.</td><td>Jusqu’à ce que vous les effaciez</td><td>Non requis : fonctionnalité demandée par vous (conservation de vos choix)</td></tr>
+          <tr><td>abast-consent-calendly<br>(stockage local du navigateur)</td><td>Mémorise que vous avez accepté d’afficher l’agenda Calendly, pour ne pas vous reposer la question à chaque visite.</td><td>6 mois</td><td>Non requis : conservation de votre choix de consentement</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Service tiers : l’agenda Calendly</h2>
+      <p>L’agenda de réservation est fourni par Calendly LLC. Il n’est chargé qu’après votre clic. Une fois affiché, Calendly peut déposer ses propres cookies, nécessaires à son fonctionnement ou soumis à votre accord via son propre bandeau. Ces cookies sont régis par la <a class="link" href="https://calendly.com/privacy" target="_blank" rel="noopener">politique de confidentialité de Calendly</a>.</p>
+      <p>Vous pouvez à tout moment ne pas utiliser Calendly et nous contacter directement : <a class="link" href="mailto:contact@abastup.fr">contact@abastup.fr</a> ou <a class="link" href="tel:+33661468791">06 61 46 87 91</a>.</p>
+
+      <h2>Gérer vos choix</h2>
+      <p>Les boutons ci-dessous agissent immédiatement sur cet appareil et ce navigateur.</p>
+      <div class="legal-actions">
+        <button type="button" class="btn btn--primary btn--sm" id="revoke-calendly">Retirer mon accord pour Calendly</button>
+        <button type="button" class="btn btn--light btn--sm" id="clear-criteria" style="border:1px solid var(--line)">Effacer mes critères enregistrés</button>
+      </div>
+      <p class="legal-status" id="cookie-status" role="status" aria-live="polite"></p>
+      <p>Les cookies déjà déposés par Calendly se trouvent sur le domaine calendly.com : pour les supprimer, utilisez les réglages de votre navigateur (paramètres de confidentialité → cookies et données de site). Vous pouvez aussi configurer votre navigateur pour bloquer les cookies tiers.</p>
+
+      <p style="margin-top:40px;font-size:.85rem">Dernière mise à jour : septembre 2026.</p>
+    </div>
+  </main>
+  <footer class="legal-footer">
+    <div class="container">
+      <nav aria-label="Informations légales"><a href="mentions-legales.html">Mentions légales</a><a href="cgu.html">Conditions d’utilisation</a><a href="conditions-generales.html">Conditions générales</a><a href="garantie.html">Garantie 30 jours</a><a href="confidentialite.html">Confidentialité</a><a href="cookies.html">Cookies</a></nav>
+      <p>© 2026 ABAST UP — Tom Merlot EI · SIREN 130 358 963</p>
+    </div>
+  </footer>
+  <script type="module">
+    import { saveConsent, hasConsent } from './assets/js/components/booking.js';
+    const status = document.getElementById('cookie-status');
+    const say = (t) => { status.textContent = t; };
+    document.getElementById('revoke-calendly').addEventListener('click', () => {
+      const had = hasConsent(); saveConsent(false);
+      say(had ? 'Votre accord pour Calendly est retiré : l’agenda ne sera plus chargé sans nouveau clic de votre part.' : 'Aucun accord Calendly n’était enregistré sur cet appareil.');
+    });
+    document.getElementById('clear-criteria').addEventListener('click', () => {
+      try { localStorage.removeItem('abast-criteria-v1'); } catch { /* ignoré */ }
+      say('Vos critères enregistrés ont été effacés de cet appareil.');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Domaine principal : https://abastup.fr (www redirige vers ce domaine) -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://abastup.fr/</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://abastup.fr/garantie.html</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://abastup.fr/conditions-generales.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://abastup.fr/cgu.html</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
+  <url><loc>https://abastup.fr/mentions-legales.html</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
+  <url><loc>https://abastup.fr/confidentialite.html</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
+  <url><loc>https://abastup.fr/cookies.html</loc><changefreq>yearly</changefreq><priority>0.1</priority></url>
+</urlset>
