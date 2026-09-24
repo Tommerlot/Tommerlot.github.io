@@ -34,7 +34,7 @@ export const SITE = {
    */
   booking: {
     provider: 'calendly',
-    url: 'https://calendly.com/t-merlot08', // lien de la page Calendly (idéalement : lien direct du type de rendez-vous)
+    url: 'https://calendly.com/t-merlot08/30min', // lien de la page Calendly (idéalement : lien direct du type de rendez-vous)
     embed: true, // true : agenda intégré dans la page ; false : ouverture dans un nouvel onglet
   },
 
