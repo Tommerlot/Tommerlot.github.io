@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-
-# Les robots d'indexation et agents IA sont autorises. Resume de l'offre pour les IA : /llms.txt
-Sitemap: https://abastup.fr/sitemap.xml
