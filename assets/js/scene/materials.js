@@ -114,11 +114,19 @@ export async function createMaterials(q) {
   const S0 = Math.min(S, 512);
   const uniforms = { uTime: { value: 0 }, uCaustic: { value: 1.25 } };
 
-  const [trav, coping, mos, plas, conc, wood, stone, grassT, grav, barkT, fab, fabDark, waterN] = await Promise.all([
+  // Les textures sont calculées en arrière-plan ; en attendant, les matériaux utilisent des textures provisoires
+  // (la scène et ses shaders se préparent en même temps). M.texturesReady : toutes les vraies images en place.
+  const pending = [
     T.travertine(S0, 3, 0xc9bca6), T.travertine(s2, 5, 0xdcd2c0), T.mosaic(S0), T.plaster(s2), T.concrete(s2),
     T.woodSlats(s2), T.stoneWall(S0), T.grass(S0), T.gravel(s2), T.bark(256), T.fabric(256, 37, 0xece6d9), T.fabric(256, 39, 0x5b5e57),
     T.waterNormal(S0),
-  ]);
+  ];
+  const sets = pending.map(() => T.pbrPlaceholder());
+  sets[12] = sets[12].normalMap; // normales de l'eau seules
+  const [trav, coping, mos, plas, conc, wood, stone, grassT, grav, barkT, fab, fabDark, waterN] = sets;
+  const swapTex = (old, fresh) => { old.image = fresh.image; old.dispose(); old.needsUpdate = true; };
+  const fill = (old, fresh) => { if (old.isTexture) swapTex(old, fresh); else ['map', 'normalMap', 'roughnessMap'].forEach((k) => swapTex(old[k], fresh[k])); };
+  const texturesReady = Promise.all(pending.map((p, i) => p.then((fresh) => fill(sets[i], fresh))));
   const aniso = 8;
   [trav, coping, mos, plas, conc, wood, stone, grassT, grav, barkT, fab, fabDark].forEach((set) => Object.values(set).forEach((t) => { t.anisotropy = aniso; }));
 
@@ -127,7 +135,7 @@ export async function createMaterials(q) {
   });
 
   const M = {
-    uniforms,
+    uniforms, texturesReady,
     terrace: std(trav, { color: 0xe2d8c8, normalScale: new THREE.Vector2(0.8, 0.8) }),
     coping: std(coping, { normalScale: new THREE.Vector2(0.9, 0.9) }),
     poolTile: withCaustics(std(mos, { normalScale: new THREE.Vector2(0.6, 0.6), color: 0xf2f6f5 }), uniforms),
@@ -201,13 +209,11 @@ export async function createMaterials(q) {
   // dans les mêmes textures (aucun matériau à reconstruire), une surface à la fois pour rester fluide.
   M.upgradeTextures = async () => {
     if (S <= S0) { T.releaseWorkers(); return; }
-    const swapTex = (old, fresh) => { old.image = fresh.image; old.dispose(); old.needsUpdate = true; };
     const jobs = [
       [trav, T.travertine(S, 3, 0xc9bca6)], [mos, T.mosaic(S)], [stone, T.stoneWall(S)], [grassT, T.grass(S)], [waterN, T.waterNormal(S)],
     ];
     for (const [old, pending] of jobs) {
-      const fresh = await pending;
-      if (old.isTexture) swapTex(old, fresh); else ['map', 'normalMap', 'roughnessMap'].forEach((k) => swapTex(old[k], fresh[k]));
+      fill(old, await pending);
       await new Promise((r) => setTimeout(r, 50));
     }
     T.releaseWorkers();

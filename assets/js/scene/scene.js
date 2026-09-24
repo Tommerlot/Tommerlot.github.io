@@ -125,8 +125,7 @@ export async function createScene(container, { reducedMotion = false } = {}) {
 
   // ---------- Contenu ----------
   performance.mark('abast:3d-debut');
-  const M = await createMaterials(q);
-  performance.mark('abast:3d-textures');
+  const M = await createMaterials(q); // rend la main tout de suite : les textures se calculent en parallèle
   scene.add(buildVilla(M));
   const { group: poolGroup } = buildPool(M);
   scene.add(poolGroup);
@@ -222,12 +221,21 @@ export async function createScene(container, { reducedMotion = false } = {}) {
   // Premier rendu (compilation des shaders) puis fondu d'apparition
   applyCamera(0);
   // Compilation des shaders en parallèle par la carte graphique (sans figer la page), puis premier rendu
+  // (avec post-traitement, la scène est dessinée dans une image intermédiaire et non à l'écran : les shaders
+  //  n'y sont pas les mêmes, il faut donc les préparer pour cette cible, sinon ils se compilent au premier rendu
+  //  en figeant la page plusieurs secondes)
+  renderer.setRenderTarget(composer ? composer.readBuffer : null);
   try { await renderer.compileAsync(scene, camera); } catch { renderer.compile(scene, camera); }
+  renderer.setRenderTarget(null);
   performance.mark('abast:3d-shaders');
+  await M.texturesReady;
+  performance.mark('abast:3d-textures');
   // Envoi des textures à la carte graphique une par une (la page respire entre deux envois)
   const textures = new Set();
   scene.traverse((o) => { if (!o.material) return; [].concat(o.material).forEach((m) => ['map', 'normalMap', 'roughnessMap', 'alphaMap'].forEach((k) => m[k] && textures.add(m[k]))); });
-  for (const tex of textures) { renderer.initTexture(tex); await new Promise((r) => setTimeout(r, 0)); }
+  // (pause par MessageChannel : immédiate, contrairement à setTimeout qui peut être ralenti par le navigateur)
+  const yieldNow = () => new Promise((r) => { const ch = new MessageChannel(); ch.port1.onmessage = () => r(); ch.port2.postMessage(0); });
+  for (const tex of textures) { renderer.initTexture(tex); await yieldNow(); }
   performance.mark('abast:3d-upload');
   render(0);
   performance.mark('abast:3d-pret');

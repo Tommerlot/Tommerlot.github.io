@@ -90,6 +90,13 @@ export const bark = pbr('bark');
 export const fabric = pbr('fabric');
 export const waterNormal = (...args) => run('waterNormal', args).then((r) => dataTex(r.nrm, r.size, false));
 
+/** Textures provisoires (4 px, mêmes réglages) : les matériaux et shaders se préparent pendant que les vraies
+ *  textures sont calculées ; leurs images sont ensuite remplacées sur place. */
+export function pbrPlaceholder() {
+  const px = (r, g, b) => { const a = new Uint8Array(16 * 4); for (let i = 0; i < 16; i++) a.set([r, g, b, 255], i * 4); return a; };
+  return { map: dataTex(px(200, 200, 200), 4, true), normalMap: dataTex(px(128, 128, 255), 4, false), roughnessMap: dataTex(px(220, 220, 220), 4, false) };
+}
+
 // ---------- Sprites de feuillage (canvas 2D, alpha) ----------
 function spriteCanvas(size, draw) {
   const c = document.createElement('canvas'); c.width = c.height = size;
