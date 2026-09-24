@@ -49,11 +49,17 @@ function cameraPose(p, aspect, out) {
   const theta = THETA0 + p * Math.PI * 2;
   const back = (1 - Math.cos(theta)) / 2;            // 0 devant la villa, 1 derrière
   const portrait = aspect < 0.9;
-  const R = (portrait ? 25 : 20.5) + back * 12;
-  const h = 3.0 + back * 5.5 + Math.sin(theta * 2) * 0.25;
+  const R = (portrait ? 21 : 20.5) + back * 12;
+  const h = 3.0 + back * 5.5 + Math.sin(theta * 2) * 0.25 + (portrait ? 1.8 : 0);
   const cx = 0.5, cz = -4;
   out.pos.set(cx + Math.sin(theta) * R, h, cz + Math.cos(theta) * R);
-  out.target.set(Math.sin(theta) * 1.2, 0.9 + back * 2.2, -3.2 - back * 7);
+  if (portrait) {
+    // Téléphone : caméra plus proche et inclinée vers le bassin → villa et piscine dans le haut de l'écran,
+    // au-dessus du texte (au lieu d'un grand ciel vide)
+    out.target.set(Math.sin(theta) * 1.2, -2.2 + back * 3.6, -0.5 - back * 9.5);
+  } else {
+    out.target.set(Math.sin(theta) * 1.2, 0.9 + back * 2.2, -3.2 - back * 7);
+  }
   return out;
 }
 
@@ -111,16 +117,21 @@ export async function createScene(container, { reducedMotion = false } = {}) {
   sun.shadow.mapSize.set(q.shadowSize, q.shadowSize);
   const sc = sun.shadow.camera; sc.left = -32; sc.right = 32; sc.top = 32; sc.bottom = -32; sc.near = 20; sc.far = 160;
   sc.updateProjectionMatrix();
-  sun.shadow.bias = -0.0003; sun.shadow.normalBias = 0.03; sun.shadow.radius = 3;
+  // (carte d'ombre moins précise sur mobile → décalages plus forts pour éviter les « anneaux » sur les grandes surfaces)
+  const coarse = q.shadowSize < 2048;
+  sun.shadow.bias = coarse ? -0.0009 : -0.0003; sun.shadow.normalBias = coarse ? 0.09 : 0.03; sun.shadow.radius = 3;
   scene.add(sun, sun.target);
   scene.add(new THREE.HemisphereLight(0xcfe0ee, 0x6b6450, 0.15));
 
   // ---------- Contenu ----------
+  performance.mark('abast:3d-debut');
   const M = await createMaterials(q);
+  performance.mark('abast:3d-textures');
   scene.add(buildVilla(M));
   const { group: poolGroup } = buildPool(M);
   scene.add(poolGroup);
   scene.add(buildGarden(M, q));
+  performance.mark('abast:3d-geometrie');
 
   // ---------- Post-traitement ----------
   let composer = null, grainPass = null;
@@ -170,7 +181,7 @@ export async function createScene(container, { reducedMotion = false } = {}) {
 
   // ---------- Boucle ----------
   const clock = new THREE.Clock();
-  let t = 0, frames = 0, slowFrames = 0, degraded = false;
+  let t = 0, frames = 0, slowFrames = 0, warm = 0, degraded = false;
   function render(dt) {
     t += dt;
     const tt = reducedMotion ? 4 : t;
@@ -192,9 +203,10 @@ export async function createScene(container, { reducedMotion = false } = {}) {
     if (Math.abs(targetP - currentP) < 1e-5) currentP = targetP;
     render(dt);
     // Adaptation dynamique : si l'appareil peine, on allège le rendu
-    frames++;
-    if (dt > 1 / 38) slowFrames++;
-    if (frames === 120) {
+    // (les 90 premières images sont ignorées : la carte graphique « chauffe », ce n'est pas représentatif)
+    frames++; warm++;
+    if (warm > 90 && dt > 1 / 38) slowFrames++;
+    if (warm > 90 && frames >= 120) {
       if (!degraded && slowFrames > 60) {
         degraded = true;
         if (composer) { composer.dispose(); composer = null; grainPass = null; }
@@ -209,9 +221,19 @@ export async function createScene(container, { reducedMotion = false } = {}) {
 
   // Premier rendu (compilation des shaders) puis fondu d'apparition
   applyCamera(0);
-  renderer.compile(scene, camera);
+  // Compilation des shaders en parallèle par la carte graphique (sans figer la page), puis premier rendu
+  try { await renderer.compileAsync(scene, camera); } catch { renderer.compile(scene, camera); }
+  performance.mark('abast:3d-shaders');
+  // Envoi des textures à la carte graphique une par une (la page respire entre deux envois)
+  const textures = new Set();
+  scene.traverse((o) => { if (!o.material) return; [].concat(o.material).forEach((m) => ['map', 'normalMap', 'roughnessMap', 'alphaMap'].forEach((k) => m[k] && textures.add(m[k]))); });
+  for (const tex of textures) { renderer.initTexture(tex); await new Promise((r) => setTimeout(r, 0)); }
+  performance.mark('abast:3d-upload');
   render(0);
+  performance.mark('abast:3d-pret');
   setTimeout(() => renderer.domElement.classList.add('is-ready'), 30);
+  // Pleine définition des grandes surfaces, en arrière-plan une fois la scène affichée
+  setTimeout(() => M.upgradeTextures().then(() => { performance.mark('abast:3d-hd'); if (reducedMotion) render(0); }), 400);
 
   return {
     setProgress(p, immediate = false) {
@@ -229,6 +251,19 @@ export async function createScene(container, { reducedMotion = false } = {}) {
       renderer.dispose(); composer?.dispose();
     },
     get info() { return { tier: q.tier, calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, degraded }; },
-    debug: { THREE, scene, camera, renderer, sun, sky, M, render: () => render(0), setExposure: (e) => { renderer.toneMappingExposure = e; } },
+    debug: {
+      THREE, scene, camera, renderer, sun, sky, M, render: () => render(0), setExposure: (e) => { renderer.toneMappingExposure = e; },
+      /** Exporte une image de la scène (même rendu que l'affichage réel) — sert à fabriquer l'image d'attente. */
+      async exportFrame(w, h, p = 0, type = 'image/jpeg', quality = 0.82) {
+        const prevPR = renderer.getPixelRatio();
+        renderer.setPixelRatio(1); renderer.setSize(w, h, false);
+        camera.aspect = w / h; fitFov();
+        if (composer) { composer.setPixelRatio(1); composer.setSize(w, h); }
+        currentP = targetP = p; render(0);
+        const blob = await new Promise((r) => renderer.domElement.toBlob(r, type, quality));
+        renderer.setPixelRatio(prevPR); if (composer) composer.setPixelRatio(prevPR); resize();
+        return blob;
+      },
+    },
   };
 }

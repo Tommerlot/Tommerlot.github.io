@@ -109,12 +109,15 @@ function antiTile(mat, macroScale = 0.137) {
 // ---------- Bibliothèque ----------
 export async function createMaterials(q) {
   const S = q.texSize, s2 = Math.max(256, S / 2);
+  // Affichage rapide : première passe en 512 px maximum (4× moins de calcul), puis les 5 grandes surfaces
+  // passent en pleine définition en arrière-plan (M.upgradeTextures, appelé après le premier rendu).
+  const S0 = Math.min(S, 512);
   const uniforms = { uTime: { value: 0 }, uCaustic: { value: 1.25 } };
 
   const [trav, coping, mos, plas, conc, wood, stone, grassT, grav, barkT, fab, fabDark, waterN] = await Promise.all([
-    T.travertine(S, 3, 0xc9bca6), T.travertine(s2, 5, 0xdcd2c0), T.mosaic(S), T.plaster(s2), T.concrete(s2),
-    T.woodSlats(s2), T.stoneWall(S), T.grass(S), T.gravel(s2), T.bark(256), T.fabric(256, 37, 0xece6d9), T.fabric(256, 39, 0x5b5e57),
-    T.waterNormal(S),
+    T.travertine(S0, 3, 0xc9bca6), T.travertine(s2, 5, 0xdcd2c0), T.mosaic(S0), T.plaster(s2), T.concrete(s2),
+    T.woodSlats(s2), T.stoneWall(S0), T.grass(S0), T.gravel(s2), T.bark(256), T.fabric(256, 37, 0xece6d9), T.fabric(256, 39, 0x5b5e57),
+    T.waterNormal(S0),
   ]);
   const aniso = 8;
   [trav, coping, mos, plas, conc, wood, stone, grassT, grav, barkT, fab, fabDark].forEach((set) => Object.values(set).forEach((t) => { t.anisotropy = aniso; }));
@@ -193,5 +196,21 @@ export async function createMaterials(q) {
   M.pittosporum = leafMat(T.denseFoliage(256, 67, [58, 78, 48], [132, 148, 98]), 0xffffff, 0.8);
   M.lavender = leafMat(T.lavender(256, 53), 0xffffff, 0.9);
   M.tuft = leafMat(T.grassTuft(256, 59), 0xffffff, 0.9);
+
+  // Passage en pleine définition, en arrière-plan : les nouvelles images remplacent les anciennes
+  // dans les mêmes textures (aucun matériau à reconstruire), une surface à la fois pour rester fluide.
+  M.upgradeTextures = async () => {
+    if (S <= S0) { T.releaseWorkers(); return; }
+    const swapTex = (old, fresh) => { old.image = fresh.image; old.dispose(); old.needsUpdate = true; };
+    const jobs = [
+      [trav, T.travertine(S, 3, 0xc9bca6)], [mos, T.mosaic(S)], [stone, T.stoneWall(S)], [grassT, T.grass(S)], [waterN, T.waterNormal(S)],
+    ];
+    for (const [old, pending] of jobs) {
+      const fresh = await pending;
+      if (old.isTexture) swapTex(old, fresh); else ['map', 'normalMap', 'roughnessMap'].forEach((k) => swapTex(old[k], fresh[k]));
+      await new Promise((r) => setTimeout(r, 50));
+    }
+    T.releaseWorkers();
+  };
   return M;
 }

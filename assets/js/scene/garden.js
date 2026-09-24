@@ -98,7 +98,8 @@ export function buildGarden(M, q) {
   hillMesh.receiveShadow = false; g.add(hillMesh);
 
   // Pins parasols et arbres lointains (silhouettes)
-  const farMat = new THREE.MeshStandardMaterial({ map: M.cypress.map, alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.9 });
+  // (léger éclairage propre : vus à contre-jour, les arbres lointains ne virent plus au noir)
+  const farMat = new THREE.MeshStandardMaterial({ map: M.cypress.map, alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.9, emissive: 0x3a4a2c, emissiveIntensity: 0.55 });
   const farTrees = new Cards(farMat, 3.2);
   const coreCypress = new THREE.MeshStandardMaterial({ color: 0x1d2b1b, roughness: 1 });
   const coreShrub = new THREE.MeshStandardMaterial({ color: 0x33452a, roughness: 1 });
@@ -114,7 +115,7 @@ export function buildGarden(M, q) {
       const cy = pine ? h + (R() - 0.3) * 1.5 : h * (0.25 + (k / 7) * 0.75);
       const rad = pine ? 3.2 : 1.1 * (1 - k / 8);
       const p = new THREE.Vector3(x + (R() - 0.5) * rad * 1.6, y + cy, z + (R() - 0.5) * rad * 1.6);
-      farTrees.add(p, pine ? 1.4 + R() * 0.8 : 0.9 + R() * 0.4, new THREE.Color().setHSL(0.25 + R() * 0.05, 0.3, 0.2 + R() * 0.1));
+      farTrees.add(p, pine ? 1.4 + R() * 0.8 : 0.9 + R() * 0.4, new THREE.Color().setHSL(0.25 + R() * 0.05, 0.3, 0.26 + R() * 0.1));
     }
     if (pine) farTrunks.push([x, y, z, h]);
   }

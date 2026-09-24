@@ -103,6 +103,7 @@ export function initHero() {
 
   const MAX_WAIT_MS = 6000; // au-delà, on garde l'image : la 3D arriverait trop tard et figerait la page
   const start = async () => {
+    performance.mark('abast:hero-start');
     // Si la 3D n'est pas téléchargée au bout de MAX_WAIT_MS, on passe en mode allégé tout de suite
     // et on n'activera pas la 3D ensuite (elle figerait la page en arrivant tardivement).
     let gaveUp = false;
@@ -136,8 +137,25 @@ export function initHero() {
     }
   };
 
-  // Chargement différé : le contenu s'affiche d'abord, la 3D ensuite.
-  const idle = window.requestIdleCallback || ((cb) => setTimeout(cb, 200));
-  if (document.readyState === 'complete') idle(start, { timeout: 800 });
-  else window.addEventListener('load', () => idle(start, { timeout: 800 }), { once: true });
+  // La 3D démarre juste après le premier affichage (sans attendre la fin du chargement de la page),
+  // et tous ses fichiers sont demandés d'un coup plutôt qu'en cascade.
+  if (wantsWebGL) { try { preload3D(); } catch { /* aperçu hors ligne : pas de préchargement */ } }
+  setTimeout(start, 30);
+}
+
+const SCENE_MODULES = ['scene', 'quality', 'materials', 'textures', 'texgen', 'villa', 'pool', 'garden'];
+const THREE_ADDONS = [
+  'utils/BufferGeometryUtils', 'geometries/RoundedBoxGeometry', 'postprocessing/EffectComposer', 'postprocessing/RenderPass',
+  'postprocessing/GTAOPass', 'postprocessing/ShaderPass', 'postprocessing/OutputPass', 'postprocessing/Pass', 'postprocessing/MaskPass',
+  'shaders/CopyShader', 'shaders/GTAOShader', 'shaders/PoissonDenoiseShader', 'shaders/OutputShader', 'math/SimplexNoise',
+];
+function preload3D() {
+  const urls = [
+    new URL('assets/vendor/three/build/three.module.min.js', document.baseURI).href,
+    ...SCENE_MODULES.map((m) => new URL(`../scene/${m}.js`, import.meta.url).href),
+    ...THREE_ADDONS.map((m) => new URL(`assets/vendor/three/examples/jsm/${m}.js`, document.baseURI).href),
+  ];
+  urls.forEach((href) => {
+    const l = document.createElement('link'); l.rel = 'modulepreload'; l.href = href; document.head.appendChild(l);
+  });
 }
