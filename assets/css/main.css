@@ -169,6 +169,10 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spa
   .hero__poster { background-image: url('../img/hero-poster-mobile.jpg'), linear-gradient(180deg, #4a86c8 0%, #b9cad3 45%, #8a8577 60%, #1d2a2c 100%); }
 }
 .hero__media.is-live .hero__poster { opacity: 0; }
+/* Mode allégé (connexion lente / sans 3D) : l'image avance doucement au fil du scroll, séquence plus courte */
+.hero--lite .hero__track { height: 320vh; }
+.hero__media:not(.is-live) .hero__poster { transform: scale(calc(1.04 + var(--p, 0) * .14)) translate3d(calc(var(--p, 0) * -3.5%), calc(var(--p, 0) * 1.5%), 0); transform-origin: 62% 55%; will-change: transform; }
+.hero--lite .hero__dial { display: none; }
 .hero__scrim { position: absolute; inset: 0; pointer-events: none;
   background:
     linear-gradient(180deg, rgba(8, 12, 14, .55) 0%, rgba(8, 12, 14, 0) 28%, rgba(8, 12, 14, 0) 55%, rgba(8, 12, 14, .7) 100%),
@@ -422,6 +426,8 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spa
 .js .reveal.is-in { opacity: 1; transform: none; }
 .js .reveal-stagger > * { opacity: 0; transform: translateY(22px); transition: opacity .9s var(--ease), transform 1s var(--ease); transition-delay: calc(var(--i, 0) * 90ms); }
 .js .reveal-stagger.is-in > * { opacity: 1; transform: none; }
+/* Filet de sécurité : JavaScript absent ou très en retard → tout le contenu reste affiché */
+.js-late .reveal, .js-late .reveal-stagger > * { opacity: 1; transform: none; }
 
 /* ---------- Pages légales ---------- */
 .legal { background: var(--paper); min-height: 100vh; padding: calc(var(--header-h) + 64px) 0 96px; }
@@ -481,6 +487,7 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spa
   .mobile-cta[aria-hidden='false'] a { pointer-events: auto; }
   .site-footer { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
   .hero__track { height: 460vh; }
+  .hero--lite .hero__track { height: 280vh; }
 }
 
 @media (max-width: 640px) {
@@ -546,7 +553,8 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spa
 /* ---------- Mouvement réduit ---------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
-  .hero__track { height: auto; }
+  .hero__track, .hero--lite .hero__track { height: auto; }
+  .hero__media:not(.is-live) .hero__poster, .hero--lite .hero__poster { transform: none; }
   .hero__stage { position: relative; height: auto; min-height: 100svh; }
   .hero__chapters { position: relative; inset: auto; padding: calc(var(--header-h) + 48px) 0 64px; display: grid; gap: 64px; }
   .chapter { position: relative; left: auto; right: auto; bottom: auto; opacity: 1; transform: none; padding: 0 var(--gutter); pointer-events: auto; }

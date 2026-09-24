@@ -25,9 +25,30 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image:alt" content="Villa contemporaine avec piscine et jardin méditerranéen — visuel 3D d’illustration ABAST UP">
 
+  <!-- Active les animations dès le premier affichage (évite le « contenu qui apparaît puis disparaît »
+       sur connexion lente) ; filet de sécurité : si le JavaScript n'est pas arrivé en 4 s, tout reste visible. -->
+  <script>
+    document.documentElement.classList.add('js');
+    setTimeout(function () { if (!window.__abastReady) document.documentElement.classList.add('js-late'); }, 4000);
+  </script>
+
   <!-- Polices hébergées avec le site (aucune requête vers un service tiers) -->
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/manrope-latin-wght-normal.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="assets/fonts/instrument-serif-latin-400-italic.woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/main.css">
+
+  <!-- Scripts du site annoncés d'avance : téléchargés en parallèle plutôt qu'en cascade -->
+  <link rel="modulepreload" href="assets/js/main.js">
+  <link rel="modulepreload" href="assets/js/config.js">
+  <link rel="modulepreload" href="assets/js/components/header.js">
+  <link rel="modulepreload" href="assets/js/components/hero.js">
+  <link rel="modulepreload" href="assets/js/components/reveal.js">
+  <link rel="modulepreload" href="assets/js/components/customization.js">
+  <link rel="modulepreload" href="assets/js/components/method.js">
+  <link rel="modulepreload" href="assets/js/components/simulation.js">
+  <link rel="modulepreload" href="assets/js/components/booking.js">
+  <link rel="modulepreload" href="assets/js/components/faq.js">
+  <link rel="modulepreload" href="assets/js/components/footer.js">
   <link rel="preload" as="image" href="assets/img/hero-poster.jpg" media="(min-width: 641px)" fetchpriority="high">
   <link rel="preload" as="image" href="assets/img/hero-poster-mobile.jpg" media="(max-width: 640px)" fetchpriority="high">
 

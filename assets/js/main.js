@@ -14,6 +14,7 @@ import { initBooking } from './components/booking.js';
 import { initFaq } from './components/faq.js';
 import { initFooter } from './components/footer.js';
 
+window.__abastReady = true; // signale au filet de sécurité (index.html) que le JavaScript est bien arrivé
 document.documentElement.classList.add('js');
 
 // Couleurs de marque depuis la config

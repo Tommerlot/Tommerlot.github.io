@@ -34,7 +34,19 @@ export function initHero() {
     }
     if (dialProgress) dialProgress.style.strokeDashoffset = String(100 - progress * 100);
     if (dialDeg) dialDeg.textContent = `${Math.round(progress * 360)}°`;
+    media.style.setProperty('--p', progress.toFixed(4)); // mouvement de l'image en mode allégé
     renderer?.setProgress(progress);
+  };
+
+  // Mode allégé (connexion lente, pas de WebGL, 3D trop longue à arriver) : image animée au scroll,
+  // séquence raccourcie. La position de lecture est conservée pour éviter tout saut de page.
+  const enterLite = () => {
+    if (hero.classList.contains('hero--lite')) return;
+    const p = computeProgress();
+    const inHero = track.getBoundingClientRect().top < 0 && p > 0 && p < 1;
+    hero.classList.add('hero--lite');
+    if (inHero) window.scrollTo(0, track.offsetTop + p * (track.offsetHeight - window.innerHeight));
+    update();
   };
 
   let ticking = false;
@@ -81,15 +93,28 @@ export function initHero() {
   const forced = new URLSearchParams(location.search).get('hero');
   const mode = ['poster', 'webgl', 'sequence', 'auto'].includes(forced) ? forced : SITE.hero.mode;
   const wantsSequence = mode === 'sequence' && SITE.hero.sequence.count > 0;
-  const wantsWebGL = !wantsSequence && mode !== 'poster' && hasWebGL2 && (mode === 'webgl' || mode === 'auto');
+  // Cas certains → pas de 3D : « économie de données » activée ou connexion 2G.
+  // (Les estimations de débit du navigateur sont trop approximatives pour décider seules : dans les autres cas,
+  //  c'est le temps réel de téléchargement de la 3D qui tranche, voir MAX_WAIT_MS.)
+  const conn = navigator.connection;
+  const slowNet = !!conn && (conn.saveData === true || /(^|-)2g$/.test(conn.effectiveType || ''));
+  const wantsWebGL = !wantsSequence && mode !== 'poster' && hasWebGL2 && (mode === 'webgl' || (mode === 'auto' && !slowNet));
+  if (!wantsWebGL && !wantsSequence) enterLite();
 
+  const MAX_WAIT_MS = 6000; // au-delà, on garde l'image : la 3D arriverait trop tard et figerait la page
   const start = async () => {
+    // Si la 3D n'est pas téléchargée au bout de MAX_WAIT_MS, on passe en mode allégé tout de suite
+    // et on n'activera pas la 3D ensuite (elle figerait la page en arrivant tardivement).
+    let gaveUp = false;
+    const guard = mode === 'auto' && wantsWebGL ? setTimeout(() => { gaveUp = true; enterLite(); }, MAX_WAIT_MS) : 0;
     try {
       if (wantsSequence) {
         const { createSequence } = await import('../scene/sequence.js');
         renderer = await createSequence(media, SITE.hero.sequence);
       } else if (wantsWebGL) {
         const { createScene } = await import('../scene/scene.js');
+        clearTimeout(guard);
+        if (gaveUp) return;
         renderer = await createScene(media, { reducedMotion: reduced });
       }
       if (renderer) {
@@ -107,6 +132,7 @@ export function initHero() {
       }
     } catch (err) {
       console.warn('[ABAST UP] Hero : rendu 3D indisponible, affichage du poster.', err);
+      enterLite();
     }
   };
 
