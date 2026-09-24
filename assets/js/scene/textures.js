@@ -37,7 +37,11 @@ function makeNoise(seed = 1) {
 const clamp01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
 const mix = (a, b, t) => a + (b - a) * t;
 const hex = (h) => [(h >> 16 & 255) / 255, (h >> 8 & 255) / 255, (h & 255) / 255];
-const yieldFrame = () => new Promise((r) => setTimeout(r, 0));
+// Rend la main au navigateur (scroll, clics) sans le délai minimal des minuteurs
+const yieldChannel = new MessageChannel();
+const yieldQueue = [];
+yieldChannel.port1.onmessage = () => yieldQueue.shift()?.();
+const yieldFrame = () => (globalThis.scheduler?.yield ? globalThis.scheduler.yield() : new Promise((r) => { yieldQueue.push(r); yieldChannel.port2.postMessage(0); }));
 
 /**
  * Génère une texture à partir d'une fonction par pixel (u,v ∈ [0,1[) → {c:[r,g,b], h, r}
@@ -47,6 +51,9 @@ async function bake(size, fn, { normalStrength = 2, wrap = true } = {}) {
   const col = new Uint8ClampedArray(size * size * 4);
   const rough = new Uint8ClampedArray(size * size * 4);
   const height = new Float32Array(size * size);
+  // Pause dès que le calcul dépasse ~12 ms : la page reste fluide (scroll, clics) pendant la génération
+  let last = performance.now();
+  const breathe = async () => { if (performance.now() - last > 12) { await yieldFrame(); last = performance.now(); } };
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
       const i = y * size + x;
@@ -56,7 +63,7 @@ async function bake(size, fn, { normalStrength = 2, wrap = true } = {}) {
       rough[i * 4] = r; rough[i * 4 + 1] = r; rough[i * 4 + 2] = r; rough[i * 4 + 3] = 255;
       height[i] = s.h ?? 0;
     }
-    if (y % 96 === 95) await yieldFrame();
+    await breathe();
   }
   // Normal map (Sobel, bords bouclés)
   const nrm = new Uint8ClampedArray(size * size * 4);
@@ -70,7 +77,7 @@ async function bake(size, fn, { normalStrength = 2, wrap = true } = {}) {
       const i = (y * size + x) * 4;
       nrm[i] = (nx * 0.5 + 0.5) * 255; nrm[i + 1] = (ny * 0.5 + 0.5) * 255; nrm[i + 2] = (nz * 0.5 + 0.5) * 255; nrm[i + 3] = 255;
     }
-    if (y % 128 === 127) await yieldFrame();
+    await breathe();
   }
   const mk = (data, srgb) => {
     const t = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
