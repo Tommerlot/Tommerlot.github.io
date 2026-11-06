@@ -1,13 +1,10 @@
 {
-  "name": "ABAST UP",
-  "short_name": "ABAST UP",
-  "description": "Génération de clients qualifiés pour les entreprises de piscine.",
+  "name": "AbastUp",
+  "short_name": "AbastUp",
+  "description": "Des demandes de devis à votre nom pour les artisans.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0b1114",
-  "theme_color": "#0b1114",
-  "icons": [
-    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" },
-    { "src": "assets/img/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
-  ]
+  "background_color": "#f6f2ea",
+  "theme_color": "#f6f2ea",
+  "icons": [{ "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
 }
