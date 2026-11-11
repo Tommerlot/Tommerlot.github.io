@@ -129,7 +129,7 @@ em.s { font-family: var(--serif); font-style: italic; font-weight: 400; letter-s
 }
 .lead-card .row { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
 .lead-card b { font-size: .9rem; }
-.lead-card time { color: var(--muted); font-size: .74rem; white-space: nowrap; }
+.lead-card .when { color: var(--muted); font-size: .74rem; white-space: nowrap; }
 .lead-card .tag { display: inline-block; margin-top: 6px; padding: 2px 8px; border-radius: 999px; background: var(--accent-soft); color: #8a3412; font-weight: 700; font-size: .72rem; }
 .lead-card.new { border-color: var(--accent); }
 .phone-note { position: absolute; bottom: -34px; left: 0; right: 0; text-align: center; font-size: .78rem; color: var(--muted); }
